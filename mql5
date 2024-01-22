@@ -1,0 +1,100 @@
+mql5
+//+------------------------------------------------------------------+
+//|                               Grand Gold Scalper                |
+//|                     Developer's Site: forexroboteasy.com         |
+//|                  Developed by: Forex Robot Easy Team             |
+//+------------------------------------------------------------------+
+
+// Input parameters
+extern double LotSize = 0.1;         // Lot size for trading
+extern int StopLoss = 30;            // Stop loss in pips
+extern int TakeProfit = 50;          // Take profit in pips
+
+// Global variables
+int ticket = 0;                     // Order ticket number
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    // Add initialization code here
+
+    return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Add deinitialization code here
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Check for existing orders
+    if (OrdersTotal() == 0)
+    {
+        // Scan the forex market for trading opportunities
+        if (ScanMarket())
+        {
+            // Open a new order
+            OpenOrder();
+        }
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Function to scan the forex market for trading opportunities      |
+//+------------------------------------------------------------------+
+bool ScanMarket()
+{
+    // Add code to scan the forex market for trading opportunities here
+
+    return(true); // Return true if a trading opportunity is found, otherwise false
+}
+
+//+------------------------------------------------------------------+
+//| Function to open a new order                                      |
+//+------------------------------------------------------------------+
+void OpenOrder()
+{
+    // Add code to open a new order here
+
+    // Set stop loss and take profit levels
+    double stopLossPrice = Ask - StopLoss * Point;
+    double takeProfitPrice = Ask + TakeProfit * Point;
+
+    // Open a buy order
+    ticket = OrderSend(Symbol(), OP_BUY, LotSize, Ask, 3, stopLossPrice, takeProfitPrice, 'Grand Gold Scalper', 0, 0, Green);
+}
+
+//+------------------------------------------------------------------+
+//| Expert start function                                            |
+//+------------------------------------------------------------------+
+void OnStart()
+{
+    // Add code for real-time data analysis capabilities here
+
+    // Close the order with profit
+    if (IsTradeAllowed() && OrderSelect(ticket, SELECT_BY_TICKET) && OrderType() == OP_BUY)
+    {
+        double orderProfit = OrderProfit();
+        if (orderProfit > 0)
+        {
+            OrderClose(ticket, OrderLots(), Bid, 3, Green);
+        }
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Expert stop function                                             |
+//+------------------------------------------------------------------+
+void OnStop()
+{
+    // Add code to handle the expert stop event here
+}
